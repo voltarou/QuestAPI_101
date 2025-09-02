@@ -22,4 +22,5 @@
     <string name="gagal">Gagal</string>
     <string name="loading">Loading</string>
     <string name="tanya">Apakah anda yakin menghapus ini ?</string>
+    <string name="loading_failed">fail</string>
 </resources>
