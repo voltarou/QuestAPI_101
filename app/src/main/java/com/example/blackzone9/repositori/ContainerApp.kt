@@ -12,7 +12,7 @@ interface ContainerApp {
 }
 
 class DefaultContainerApp : ContainerApp {
-    private val baseurl = "http://10.0.2.2/api/"
+    private val baseurl = "http://10.0.2.2/tiumy/"
 
     private val json = Json {
         ignoreUnknownKeys = true
