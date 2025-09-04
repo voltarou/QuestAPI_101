@@ -14,6 +14,12 @@ object PenyediaViewModel {
         initializer {
             HomeViewModel(
                 aplikasiDataSiswa().container.repositoriDataSiswa,
+
+                )
+        }
+        initializer {
+            EntryViewModel(
+                aplikasiDataSiswa().container.repositoriDataSiswa
             )
         }
     }

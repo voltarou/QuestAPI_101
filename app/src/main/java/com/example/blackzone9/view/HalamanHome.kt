@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -27,7 +28,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,74 +38,76 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.blackzone9.R
 import com.example.blackzone9.modeldata.DataSiswa
-import com.example.blackzone9.uicontroller.DestinasiNavigasi
+import com.example.blackzone9.uicontroller.route.DestinasiHome
 import com.example.blackzone9.viewmodel.HomeViewModel
 import com.example.blackzone9.viewmodel.PenyediaViewModel
 import com.example.blackzone9.viewmodel.StatusUiSiswa
 
-object DestinasiHome: DestinasiNavigasi {
-    override val route = "home"
-    override val titleRes = R.string.app_name
-}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navigateToItemEntry: () -> Unit,
+    //navigateToItemUpdate: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(DestinasiHome.titleRes)) },
+                title = { Text(stringResource(id = R.string.app_name), color = Color.White) },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = colorResource(id = R.color.purple_500)
                 ),
                 scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
+                onClick = navigateToItemEntry,
+                //onClick = {},
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(
-                    dimensionResource(id = R.dimen.padding_large)
-                )
-            )
-            {
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+            ) {
                 Icon(
-                    imageVector = Icons.Default.Phone,
+                    imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.entry_siswa)
                 )
             }
-        },
+        }
     ) { innerPadding ->
         HomeBody(
             statusUiSiswa = viewModel.statusUiSiswa,
-            retryAction = viewModel::getSiswa, // Panggilan ke getSiswa()
+            //onSiswaClick = navigateToItemUpdate,
+            retryAction = viewModel::getSiswa,
             modifier = modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         )
     }
 }
-
 @Composable
 fun HomeBody(
     statusUiSiswa: StatusUiSiswa,
+    //onSiswaClick: (Int) -> Unit,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
     ) {
-        when (statusUiSiswa) {
+        when(statusUiSiswa) {
             is StatusUiSiswa.Loading -> LoadingScreen()
-            is StatusUiSiswa.Success -> DaftarSiswa(statusUiSiswa.siswa)
-            is StatusUiSiswa.Error -> ErrorScreen(retryAction, modifier.fillMaxSize())
+            is StatusUiSiswa.Success -> DaftarSiswa(itemSiswa = statusUiSiswa.siswa)
+            is StatusUiSiswa.Error -> ErrorScreen(
+                retryAction,
+                modifier = modifier.fillMaxSize()
+            )
         }
     }
 }
@@ -123,7 +128,7 @@ fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(stringResource(R.string.loading_failed))
+        Text(text = stringResource(R.string.gagal), modifier = Modifier.padding(16.dp))
         Button(onClick = retryAction) {
             Text(stringResource(R.string.retry))
         }
@@ -132,15 +137,16 @@ fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
 
 @Composable
 fun DaftarSiswa(
-    itemSiswa: List<DataSiswa>,
+    itemSiswa : List<DataSiswa>,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = Modifier) {
         items(items = itemSiswa, key = { it.id }) { person ->
             ItemSiswa(
                 siswa = person,
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
+
             )
         }
     }
@@ -149,9 +155,8 @@ fun DaftarSiswa(
 @Composable
 fun ItemSiswa(
     siswa: DataSiswa,
-    modifier: Modifier = Modifier,
-
-    ) {
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -165,18 +170,22 @@ fun ItemSiswa(
             ) {
                 Text(
                     text = siswa.nama,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge
                 )
+
                 Spacer(Modifier.weight(1f))
+
                 Icon(
                     imageVector = Icons.Default.Phone,
                     contentDescription = null,
                 )
+
                 Text(
                     text = siswa.telpon,
                     style = MaterialTheme.typography.titleMedium
                 )
             }
+
             Text(
                 text = siswa.alamat,
                 style = MaterialTheme.typography.titleMedium
