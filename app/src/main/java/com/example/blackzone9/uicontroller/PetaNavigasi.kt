@@ -3,11 +3,15 @@ package com.example.blackzone9.uicontroller
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.blackzone9.uicontroller.route.DestinasiDetail
 import com.example.blackzone9.uicontroller.route.DestinasiEntry
 import com.example.blackzone9.uicontroller.route.DestinasiHome
+import com.example.blackzone9.view.DetailSiswaScreen
 import com.example.blackzone9.view.EntrySiswaScreen
 import com.example.blackzone9.view.HomeScreen
 
@@ -29,10 +33,23 @@ fun HostNavigasi(
         startDestination = DestinasiHome.route,
         modifier = Modifier
     ) { composable(DestinasiHome.route) {
-        HomeScreen(navigateToItemEntry = { navController.navigate(DestinasiEntry.route)})
+        HomeScreen(
+            navigateToItemEntry = { navController.navigate(DestinasiEntry.route) },
+            navigateToItemUpdate = {
+                navController.navigate("${DestinasiEntry.route}/$it")
+            })
     }
 composable(DestinasiEntry.route) {
     EntrySiswaScreen(navigateBack = { navController.navigate(DestinasiHome.route) })
 }
+        composable(DestinasiDetail.routeWithArgs, arguments = listOf(navArgument(DestinasiDetail.itemIdArg) {
+            type = NavType.IntType
+        })) {
+            DetailSiswaScreen(
+                navigateBack = { navController.popBackStack() },
+                id = it.arguments?.getInt(DestinasiDetail.itemIdArg) ?: -1
+            )
+        }
+
     }
 }
