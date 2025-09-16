@@ -16,9 +16,9 @@ import java.io.IOException
 
 // Sealed interface untuk merepresentasikan status UI
 sealed interface StatusUiDetail {
-    object Loading : StatusUiDetail
+    data object Loading : StatusUiDetail
     data class Success(val satusiswa: Response<DataSiswa>) : StatusUiDetail
-    object Error : StatusUiDetail
+    data object Error : StatusUiDetail
 }
 
 class DetailViewModel(
@@ -37,7 +37,7 @@ class DetailViewModel(
     }
 
     // Fungsi untuk mengambil data siswa dari repositori
-    fun getSatuSiswa() {
+    private fun getSatuSiswa() {
         viewModelScope.launch {
             _statusUiDetail.value = StatusUiDetail.Loading
             _statusUiDetail.value = try {

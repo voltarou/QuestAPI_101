@@ -22,7 +22,7 @@ suspend fun getSiswa(): List<DataSiswa>
     @PUT("coba1.php")
     suspend fun editDataSiswa(@Body dataSiswa: DataSiswa): retrofit2.Response<DataSiswa>
 
-    @DELETE("delete.php")
+    @DELETE("deleteTM.php")
     suspend fun deleteDataSiswa(@Query("id") id: Int): retrofit2.Response<DataSiswa>
 
 

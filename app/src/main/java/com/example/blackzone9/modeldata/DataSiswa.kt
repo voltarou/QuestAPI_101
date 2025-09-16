@@ -32,10 +32,12 @@ fun DetailSiswa.toSiswa(): DataSiswa = DataSiswa(
     telpon = telpon
 )
 
-fun DataSiswa.toUiStateSiswa(isEntryValid: Boolean = false): UIStateSiswa = UIStateSiswa(
-    detailSiswa = this.toDetailSiswa(),
-    isEntryValid = isEntryValid
-)
+fun DataSiswa.toUiStateSiswa(isEntryValid: Boolean = false): UIStateSiswa =
+    UIStateSiswa(
+        detailSiswa = this.toDetailSiswa(),
+        isEntryValid = isEntryValid
+    )
+
 
 fun DataSiswa.toDetailSiswa(): DetailSiswa = DetailSiswa(
     id = id,

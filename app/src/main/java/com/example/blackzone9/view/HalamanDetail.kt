@@ -47,16 +47,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailSiswaScreen(
     navigateBack: () -> Unit,
-    id: Int,
-    //navigateToEditItem: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DetailViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    viewModel: DetailViewModel = viewModel(factory = PenyediaViewModel.Factory),
+    navigateToEditItem: (Int) -> Unit
 ) {
     // Collect the UI state from the ViewModel
     val uiState by viewModel.statusUiDetail.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
+        modifier = modifier, // The modifier is applied here
         topBar = {
             SiswaTopAppBar(
                 title = stringResource(DestinasiEntry.titleRes),
@@ -67,9 +67,10 @@ fun DetailSiswaScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    // Navigate to edit screen only if data is successfully loaded
                     if (uiState is StatusUiDetail.Success) {
-                        //navigateToEditItem((uiState as StatusUiDetail.Success).satusiswa.body()!!.id)
+                        // Ambil ID siswa dari hasil sukses
+                        val siswaId = (uiState as StatusUiDetail.Success).satusiswa.body()!!.id
+                        navigateToEditItem(siswaId)
                     }
                 },
                 shape = MaterialTheme.shapes.medium,
@@ -85,7 +86,6 @@ fun DetailSiswaScreen(
         BodyDetailDataSiswa(
             statusUiDetail = uiState,
             onDelete = {
-                // Launch coroutine to delete the student
                 coroutineScope.launch {
                     viewModel.hapusSatuSiswa()
                     navigateBack()
@@ -97,6 +97,7 @@ fun DetailSiswaScreen(
         )
     }
 }
+
 
 @Composable
 private fun BodyDetailDataSiswa(
